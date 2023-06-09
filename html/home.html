@@ -1,0 +1,207 @@
+<html lang="cn">
+
+    <head>
+        <link rel="icon" href="/images/st.png">            
+        <link rel="stylesheet" href="/static/home.css" type="text/css">
+        <script type="text/javascript" src="/static/jquery.js"></script>
+        
+        <title>工具集-编程社开发</title>
+    </head>
+
+    <body>
+        <sidebar>
+            
+            <label name="select-menu" value="#f1">抽取成员</label>
+            <label name="select-menu" value="#f2">处理身份证信息</label>
+            <label name="select-menu" value="#f3">设置</label>
+        </sidebar>
+        <frameArea>
+            
+            <func-page id="f1" >抽取
+
+                <div class="input_frame">
+                    <num_screen>0</num_screen>
+                    <n_i num="7"></n_i><n_i num="8"></n_i><n_i num="9"></n_i>
+                    <n_i num="4"></n_i><n_i num="5"></n_i><n_i num="6"></n_i>
+                    <n_i num="1"></n_i><n_i num="2"></n_i><n_i num="3"></n_i>
+                    <n_btn id="clear" class="iconfont">&#xe658;</n_btn><n_i num="0"></n_i><n_btn id="del" class="iconfont">&#xe6d8;</n_btn>
+                    <next>&#xebef;</next>
+                </div>
+
+                <div class="set_subject">
+                    语文
+                </div>
+
+                <div id="subjectselect" style="z-index:3;display:none;width:100%;height:100%;background:rgba(255,255,255,0.3);backdrop-filter:blur(6px);position:absolute;"></div>
+
+                <div class="rand_list_frame">
+                    <div id="lists_frame">
+                        
+                    </div>
+
+                    <div id="delete_name" class="delete_name">
+                        &#xe718;
+                    </div>
+                </div>
+                
+                <off-btn></off-btn>
+                
+            </func-page>
+            <func-page id="f2">Page 2<off-btn></off-btn></func-page>
+            <func-page id="f3">Page 3<off-btn></off-btn></func-page>
+        </frameArea>
+    </body>
+    
+    
+    <script>
+        $(document).ready(function(){
+            alert("sb");
+            let now_page = "#f0";
+            let input_num=String("0");
+            let frequency=1;
+            let fre_select=0;
+            let delete_name_checked=0;
+            let subject="语文";
+            
+            $.ajax({
+                url:"/GetSubJect",
+                Type:"GET",
+                success:function(data){
+                    subject=data.subjects;                    
+                }
+            });
+
+
+            for(i=0;1<subject.length;i++){
+                $("#subjectselect").prepend(`<input name="select_subject" Subject=${subject[i]} type="radio">${subject}`);
+            }
+
+            $("#delete_name").click(function(){
+                if(delete_name_checked){                    
+                    $(this).addClass("delete_name");
+                    $(this).removeClass("delete_name_checked");
+                }else{
+                    $(this).removeClass("delete_name");
+                    $(this).addClass("delete_name_checked");
+                }
+                delete_name_checked=!delete_name_checked;
+            });
+
+            function BIND_click_names(element){
+                $(element).click(function(){
+                    if(!delete_name_checked){
+                        t=$(this);
+                        fre_l=t.attr("fre");
+                        if(fre_l != fre_select){
+                            fre_select=fre_l
+                            $(".s_r_n").removeClass("s_r_n");
+                            t.addClass("s_r_n");
+                        }else{
+                            t.removeClass("s_r_n");
+                            fre_select=0;
+                        }
+                    }else{
+                        $(this).addClass("name_will_delete");
+                        $(this).bind("animationend",function(){
+                            $(this).remove();
+                        });
+                    }
+                    
+                });
+                
+            }
+
+            $("label[name='select-menu']").click(function () {
+                var value = $(this).attr("value");
+                if (value != now_page) {
+                    $("label[name='select-menu").removeClass();
+                    $(this).addClass("checked-label");
+                    $(now_page).addClass("now_page_moveOut")                
+                    $("func-page").removeClass();
+                    now_page = value;  
+                    $(value).addClass("checked-style");    
+                }
+            });
+
+            $("off-btn").click(function(){
+                $("func-page").removeClass();
+                $("label[name='select-menu']").removeClass();
+                now_page="f0";
+            });
+            
+            $("off-btn").html("&#xeaf2;");
+            
+            $("n_i").each(function(){
+                $(this).text($(this).attr("num"));    
+            });
+
+            $("n_i").click(function(){
+                if(input_num.length==4){
+                    return 0;
+                }
+                var w_n=$(this).attr("num");
+                if(w_n=="0" && input_num=="0"){
+                    return 0;
+                }else{
+                    input_num+=$(this).attr("num");
+                    input_num=String(parseInt(input_num));
+                    $("num_screen").text(input_num);
+                }
+            });
+
+            $(".set_subject").click(function(){
+                $("#subjectselect")[0].style.display="block";
+            });
+
+            $("#clear").click(function(){
+                input_num= "0";
+                $("num_screen").text(input_num);
+            });
+
+            $("#del").click(function(){
+                if(input_num.length==1){
+                    if(input_num=="0"){ 
+                        return 0;
+                    }else{
+                        input_num="0";
+                    }           
+                }else{
+                    input_num=input_num.slice(0,-1);
+                }
+                $("num_screen").text(input_num);
+            });
+
+            
+
+            $("next").click(function(){
+                web_time=parseInt(new Date().getTime()/1000)
+                $.ajax(
+                    {
+                        type:"GET",
+                        url:"/getname",
+                        data:{web_time:web_time,num:input_num},
+                        success:function(data){
+                            ok=data.ok;
+                            if(ok==1){                                
+                                names=data.names;
+                                subject=data.subject;
+                                size=names.length;
+                                html_text="<randed_name fre="+frequency+"><fre>第" +frequency +`次*${subject}*${size}个</fre>`;
+
+                                for(i=0;i<names.length;i++){
+                                    html_text+="<names>"+names[i]+"</names>";
+                                }
+
+                                html_text+="</randed_name>";
+                                $("#lists_frame").prepend(html_text);
+                                BIND_click_names("randed_name[fre$="+`${frequency}]`);
+                                frequency+=1;
+                            }
+                        }
+                    }
+                );
+            });
+
+        });
+    </script>
+</html>

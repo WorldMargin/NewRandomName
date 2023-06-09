@@ -1,0 +1,44 @@
+{
+  "id": "4048329",
+  "name": "newapp",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "3538379",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e718",
+      "unicode_decimal": 59160
+    },
+    {
+      "icon_id": "736800",
+      "name": "keyboard-backspace",
+      "font_class": "keyboardbackspace",
+      "unicode": "e6d8",
+      "unicode_decimal": 59096
+    },
+    {
+      "icon_id": "4624184",
+      "name": "下一步",
+      "font_class": "xiayibu",
+      "unicode": "ebef",
+      "unicode_decimal": 60399
+    },
+    {
+      "icon_id": "5387522",
+      "name": "关闭",
+      "font_class": "guanbi",
+      "unicode": "eaf2",
+      "unicode_decimal": 60146
+    },
+    {
+      "icon_id": "8039156",
+      "name": "清除输入",
+      "font_class": "qingchushuru",
+      "unicode": "e658",
+      "unicode_decimal": 58968
+    }
+  ]
+}
